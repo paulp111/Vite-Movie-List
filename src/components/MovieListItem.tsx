@@ -10,7 +10,7 @@ IconButton,
 
 interface Props {
   movie: IMovie;
-  onDelete: (movie: IMovie) => Promise<void>;
+  onDialog: (open: boolean, movie: IMovie) => void;
 }
 interface Props {
   movie: {
@@ -21,7 +21,7 @@ interface Props {
     rating: number;
   };
 }
-export default function MovieListItem({ movie, onDelete }: Props) {
+export default function MovieListItem({ movie, onDialog }: Props) {
   return (
     <Grid item>
       <Card>
@@ -43,7 +43,7 @@ export default function MovieListItem({ movie, onDelete }: Props) {
           <IconButton 
           color="primary" 
           aria-label="delete-movie"
-          onClick={() => onDelete(movie)}
+          onClick={() => onDialog(true, movie)}
           >
             <DeleteIcon />
             </IconButton>

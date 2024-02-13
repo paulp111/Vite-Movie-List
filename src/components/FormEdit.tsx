@@ -1,34 +1,31 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { MovieInput } from "../ts/interfaces/global_interface";
-import style from "./css/FormEdit.module.css";
 import { yupResolver } from "@hookform/resolvers/yup";
+import movieSchema from "./validationSchema";
 import * as yup from "yup";
-
-const movieSchema = yup
-  .object({
-    title: yup
-      .string()
-      .required("title is required")
-      .min(2, "The title must have min. 2 chars.")
-      .max(30, "The title must have max. 30 chars"),
-    director: yup.string().required("director is required"),
-    runtime: yup.number().required("runtime is required"),
-  })
-  .required();
-
-/* interface MovieInput {
-  title: string;
-  director: string;
-  runtime: number;
-} */
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  TextField,
+} from "@mui/material";
 
 interface Props {
+  open: boolean;
   onSave: (movie: MovieInput) => void;
-  editMovie?: MovieInput;
+  onClose: () => void;
+  movie?: MovieInput;
 }
 
-export default function FormEdit({ onSave, editMovie }: Props): JSX.Element {
+export default function FormEdit({
+  open,
+  onSave,
+  onClose,
+  movie = { title: "", director: "", runtime: 0 },
+}: Props): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -37,50 +34,52 @@ export default function FormEdit({ onSave, editMovie }: Props): JSX.Element {
   } = useForm<MovieInput>({ resolver: yupResolver(movieSchema) });
 
   useEffect(() => {
-    reset(editMovie);
-  }, [editMovie, reset]);
-
-  const onSubmit = (data: MovieInput) => {
-    onSave(data);
-  };
+    if (movie.id) reset(movie);
+  }, [movie, reset]);
 
   return (
-    <form className={style.inputmMovieForm} onSubmit={handleSubmit(onSave)}>
-      <label htmlFor="title">
-        Title:
-        <input
-          type="text"
-          placeholder="name a cool movie"
-          {...register("title")}
-          className={errors.title && style.error}
-      />
-      </label>
-      {errors.title && <div className={style.error}>{errors.title.message}</div>}
-
-      <label htmlFor="director">
-        Director:
-        <input
-          type="text"
-          placeholder="directed by..."
-          {...register("director")}
-          className={errors.director && style.error}
-      />
-      </label>
-      {errors.director && <div className={style.error}>{errors.director.message}</div>}
-
-      <label htmlFor="runtime">
-        Runtime:
-        <input
-          type="number"
-          placeholder="0"
-          {...register("runtime")}
-          className={errors.runtime && style.error}
-      />
-      </label>
-      {errors.runtime && <div className={style.error}>{errors.runtime.message}</div>}
-      <button type="submit" className={style.saveBtn}>
-        Save
-        </button>
-    </form>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle id="from-dialog-title">
+        {movie.id ? "Edit Movie" : "Add new Movie"}
+      </DialogTitle>
+      <form onSubmit={handleSubmit(onSave)}>
+        <DialogContent>
+          <div>
+            <TextField
+              {...register("title")}
+              error={!!errors.title}
+              label="Title"
+              sx={{ mb: 2 }}
+            />
+            {errors.title && <div>{errors.title.message}</div>}
+          </div>
+          <div>
+            <TextField
+              {...register("director")}
+              error={!!errors.director}
+              label="Director"
+              sx={{ mb: 2 }}
+            />
+            {errors.director && <div>{errors.director.message}</div>}
+          </div>
+          <div>
+            <TextField
+              {...register("runtime")}
+              error={!!errors.runtime}
+              label="Runtime"
+            />
+            {errors.runtime && <div>{errors.runtime.message}</div>}
+          </div>
+          <DialogActions>
+            <Button color="primary" type="submit">
+              Save
+            </Button>
+            <Button color="secondary" onClick={onClose}>
+              Cancel
+            </Button>
+          </DialogActions>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 }
