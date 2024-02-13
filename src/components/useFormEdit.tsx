@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 interface MovieInput {
   title: string;
@@ -15,8 +15,8 @@ interface UseFormEditProps {
 
 export function useFormEdit({ editMovie, onSave }: UseFormEditProps) {
   const [movie, setMovie] = useState<MovieInput>({
-    title: '',
-    director: '',
+    title: "",
+    director: "",
     runtime: 0,
   });
 

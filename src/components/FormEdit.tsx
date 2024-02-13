@@ -1,57 +1,86 @@
-import { useFormEdit } from './useFormEdit'; 
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { MovieInput } from "../ts/interfaces/global_interface";
+import style from "./css/FormEdit.module.css";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-interface MovieInput {
+const movieSchema = yup
+  .object({
+    title: yup
+      .string()
+      .required("title is required")
+      .min(2, "The title must have min. 2 chars.")
+      .max(30, "The title must have max. 30 chars"),
+    director: yup.string().required("director is required"),
+    runtime: yup.number().required("runtime is required"),
+  })
+  .required();
+
+/* interface MovieInput {
   title: string;
   director: string;
   runtime: number;
-}
-
-interface IMovie extends MovieInput {}
+} */
 
 interface Props {
   onSave: (movie: MovieInput) => void;
-  editMovie?: IMovie;
+  editMovie?: MovieInput;
 }
 
 export default function FormEdit({ onSave, editMovie }: Props): JSX.Element {
-  const { movie, handleChange, handleSubmit } = useFormEdit({ editMovie, onSave });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<MovieInput>({ resolver: yupResolver(movieSchema) });
+
+  useEffect(() => {
+    reset(editMovie);
+  }, [editMovie, reset]);
+
+  const onSubmit = (data: MovieInput) => {
+    onSave(data);
+  };
 
   return (
-    <form className="input-movie-form" onSubmit={handleSubmit}>
+    <form className={style.inputmMovieForm} onSubmit={handleSubmit(onSave)}>
       <label htmlFor="title">
         Title:
         <input
-          name="title"
-          id="title"
           type="text"
-          placeholder="Movie title"
-          value={movie.title}
-          onChange={handleChange}
-        />
+          placeholder="name a cool movie"
+          {...register("title")}
+          className={errors.title && style.error}
+      />
       </label>
+      {errors.title && <div className={style.error}>{errors.title.message}</div>}
+
       <label htmlFor="director">
         Director:
         <input
-          name="director"
-          id="director"
           type="text"
-          placeholder="Movie director"
-          value={movie.director}
-          onChange={handleChange}
-        />
+          placeholder="directed by..."
+          {...register("director")}
+          className={errors.director && style.error}
+      />
       </label>
+      {errors.director && <div className={style.error}>{errors.director.message}</div>}
+
       <label htmlFor="runtime">
         Runtime:
         <input
-          name="runtime"
-          id="runtime"
           type="number"
-          placeholder="Movie runtime"
-          value={movie.runtime}
-          onChange={handleChange}
-        />
+          placeholder="0"
+          {...register("runtime")}
+          className={errors.runtime && style.error}
+      />
       </label>
-      <button type="submit">Save</button>
+      {errors.runtime && <div className={style.error}>{errors.runtime.message}</div>}
+      <button type="submit" className={style.saveBtn}>
+        Save
+        </button>
     </form>
   );
 }
