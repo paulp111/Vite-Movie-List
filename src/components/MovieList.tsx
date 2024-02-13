@@ -103,8 +103,8 @@ export default function MovieList() {
             sx={{
               position: "fixed",
               right: "50%",
-              bottom: "10%",
-              transform: "translateX(-50%",
+              bottom: "1&%",
+              transform: "translateX(-50%)",
             }}
           >
             <Add />
