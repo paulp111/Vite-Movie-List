@@ -1,6 +1,7 @@
 import style from "./css/MovieListItem.module.css";
 import Rating from "./Rating";
 import { IMovie } from "../ts/interfaces/global_interface";
+import { Edit } from "@mui/icons-material";
 import { Card, CardContent, Grid, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { 
@@ -11,6 +12,7 @@ IconButton,
 interface Props {
   movie: IMovie;
   onDialog: (open: boolean, movie: IMovie) => void;
+  onEdit: (open: boolean, movie: IMovie) => void;
 }
 interface Props {
   movie: {
@@ -21,7 +23,7 @@ interface Props {
     rating: number;
   };
 }
-export default function MovieListItem({ movie, onDialog }: Props) {
+export default function MovieListItem({ movie, onDialog, onEdit }: Props) {
   return (
     <Grid item>
       <Card>
@@ -46,6 +48,13 @@ export default function MovieListItem({ movie, onDialog }: Props) {
           onClick={() => onDialog(true, movie)}
           >
             <DeleteIcon />
+            </IconButton>
+            <IconButton
+            color="primary"
+            aria-label="edit-movie"
+            onClick={() => onEdit(true, movie)}
+            >
+              <Edit />
             </IconButton>
         </CardActions>
       </Card>
